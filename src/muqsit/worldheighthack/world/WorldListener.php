@@ -16,6 +16,7 @@ use pocketmine\event\world\WorldLoadEvent;
 use pocketmine\event\world\WorldUnloadEvent;
 use pocketmine\math\Vector3;
 use pocketmine\world\Position;
+use pocketmine\entity\location;
 
 final class WorldListener implements Listener{
 
@@ -48,7 +49,7 @@ final class WorldListener implements Listener{
 	 */
 	public function onChunkLoad(ChunkLoadEvent $event) : void{
 		$chunk = $event->getChunk();
-		$this->manager->get($event->getWorld())->onChunkLoad($chunk->getX(), $chunk->getZ());
+		$this->manager->get($event->getWorld())->onChunkLoad($event->getChunkX(), $event->getChunkZ());
 	}
 
 	/**
@@ -57,7 +58,7 @@ final class WorldListener implements Listener{
 	 */
 	public function onChunkUnload(ChunkUnloadEvent $event) : void{
 		$chunk = $event->getChunk();
-		$this->manager->get($event->getWorld())->onChunkUnload($chunk->getX(), $chunk->getZ());
+		$this->manager->get($event->getWorld())->onChunkUnload($event->getChunkX(), $event->getChunkZ());
 	}
 
 	/**
@@ -66,10 +67,10 @@ final class WorldListener implements Listener{
 	 */
 	public function onBlockPlace(BlockPlaceEvent $event) : void{
 		$block = $event->getBlock();
-		$pos = $block->getPos();
+		$pos = $block->getPosition();
 		$new_pos = $this->manager->translateCoordinates($pos);
 		if($pos->world !== $new_pos->world){
-			$event->setCancelled();
+			$event->cancel();
 			$new_pos->world->setBlock($new_pos, $block);
 		}
 	}
@@ -80,10 +81,10 @@ final class WorldListener implements Listener{
 	 */
 	public function onBlockBreak(BlockBreakEvent $event) : void{
 		$block = $event->getBlock();
-		$pos = $block->getPos();
+		$pos = $block->getPosition();
 		$new_pos = $this->manager->translateCoordinates($pos);
 		if($pos->world !== $new_pos->world){
-			$event->setCancelled();
+			$event->cancel();
 			$new_pos->world->setBlock($new_pos, VanillaBlocks::AIR());
 		}
 	}
@@ -106,7 +107,7 @@ final class WorldListener implements Listener{
 				if($to_world_y !== null){
 					$location = clone $to;
 					$location->y = 4 << 4;
-					$location->setWorld($to_world_y->getWorld());
+					$location->world = ($to_world_y->getWorld());
 					$event->setTo($location);
 					return;
 				}
@@ -119,7 +120,7 @@ final class WorldListener implements Listener{
 				if($to_world_y !== null){
 					$location = clone $to;
 					$location->y = (16 - 4) << 4;
-					$location->setWorld($to_world_y->getWorld());
+					$location->world = ($to_world_y->getWorld());
 					$event->setTo($location);
 					return;
 				}

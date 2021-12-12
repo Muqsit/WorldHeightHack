@@ -17,10 +17,10 @@ final class BelowChunkUpdater extends MirrorChunkListener{
 		}
 	}
 
-	protected function mirrorChunk(Chunk $chunk) : void{
-		$target = $this->write->getChunk($chunk->getX(), $chunk->getZ(), true);
+	protected function mirrorChunk(int $chunkX, int $chunkZ, Chunk $chunk) : void{
+		$target = $this->write->getChunk($chunkX, $chunkZ, true);
 		if($target !== null){
-			$copy = FastChunkSerializer::deserialize(FastChunkSerializer::serialize($chunk));
+			$copy = FastChunkSerializer::deserializeTerrain(FastChunkSerializer::serializeTerrain($chunk));
 			for($y = 64 >> 4; $y < 128 >> 4; ++$y){
 				$target->setSubChunk(12 + ($y - (64 >> 4)), $copy->getSubChunk($y));
 			}

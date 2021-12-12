@@ -17,13 +17,14 @@ final class Loader extends PluginBase{
 	private $world_manager;
 
 	protected function onLoad() : void{
-		GeneratorManager::addGenerator(VoidGenerator::class, "void");
+        GeneratorManager::getInstance()->addGenerator(VoidGenerator::class,"void", fn() => null, true);
+		#GeneratorManager::addGenerator(, "void");
 	}
 
 	protected function onEnable() : void{
 		$this->world_manager = new WorldManager($this);
 
-		$this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(int $currentTick) : void{
+		$this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function() : void{
 			foreach($this->getServer()->getOnlinePlayers() as $player){
 				$pos = $player->getPosition();
 				$player->sendTip(
