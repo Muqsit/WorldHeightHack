@@ -37,15 +37,17 @@ final class WorldInstance{
 
 	public function onWorldBelowLoad(WorldInstance $instance) : void{
 		$this->below_listener = new BelowChunkUpdater($this->world, $instance->world);
-		foreach($this->world->getChunks() as $chunk){
-			$this->registerBelow($chunk->getX(), $chunk->getZ());
+		foreach($this->world->getLoadedChunks() as $chunkHash => $chunk){
+            World::getXZ($chunkHash, $chunkX, $chunkZ);
+			$this->registerBelow($chunkX, $chunkZ);
 		}
 	}
 
 	public function onWorldAboveLoad(WorldInstance $instance) : void{
 		$this->above_listener = new AboveChunkUpdater($this->world, $instance->world);
-		foreach($this->world->getChunks() as $chunk){
-			$this->registerAbove($chunk->getX(), $chunk->getZ());
+		foreach($this->world->getLoadedChunks() as $chunkHash => $chunk){
+            World::getXZ($chunkHash, $chunkX, $chunkZ);
+			$this->registerAbove($chunkX, $chunkZ);
 		}
 	}
 
@@ -65,14 +67,14 @@ final class WorldInstance{
 	private function registerAbove(int $chunkX, int $chunkZ) : void{
 		if($this->above_listener !== null){
 			$this->world->registerChunkListener($this->above_listener, $chunkX, $chunkZ);
-			$this->above_listener->onChunkLoaded($this->world->getChunk($chunkX, $chunkZ));
+			$this->above_listener->onChunkLoaded($chunkX, $chunkZ, $this->world->getChunk($chunkX, $chunkZ));
 		}
 	}
 
 	private function registerBelow(int $chunkX, int $chunkZ) : void{
 		if($this->below_listener !== null){
 			$this->world->registerChunkListener($this->below_listener, $chunkX, $chunkZ);
-			$this->below_listener->onChunkLoaded($this->world->getChunk($chunkX, $chunkZ));
+			$this->below_listener->onChunkLoaded($chunkX, $chunkZ, $this->world->getChunk($chunkX, $chunkZ));
 		}
 	}
 

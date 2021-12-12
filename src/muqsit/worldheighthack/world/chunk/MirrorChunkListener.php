@@ -22,27 +22,27 @@ abstract class MirrorChunkListener implements ChunkListener{
 		$this->write = $write;
 	}
 
-	public function onChunkChanged(Chunk $chunk) : void{
-		$this->mirrorChunk($chunk);
+	public function onChunkChanged(int $chunkX, int $chunkZ, Chunk $chunk) : void{
+		$this->mirrorChunk($chunkX, $chunkZ, $chunk);
 	}
 
-	public function onChunkLoaded(Chunk $chunk) : void{
+	public function onChunkLoaded(int $chunkX, int $chunkZ, Chunk $chunk) : void{
 		if($chunk->isPopulated()){
-			$this->mirrorChunk($chunk);
+			$this->mirrorChunk($chunkX, $chunkZ, $chunk);
 		}
 	}
 
-	public function onChunkUnloaded(Chunk $chunk) : void{
-		$this->read->unregisterChunkListener($this, $chunk->getX(), $chunk->getZ());
+	public function onChunkUnloaded(int $chunkX, int $chunkZ, Chunk $chunk) : void{
+		$this->read->unregisterChunkListener($this, $chunkX, $chunkZ);
 	}
 
-	public function onChunkPopulated(Chunk $chunk) : void{
-		$this->mirrorChunk($chunk);
+	public function onChunkPopulated(int $chunkX, int $chunkZ, Chunk $chunk) : void{
+		$this->mirrorChunk($chunkX, $chunkZ, $chunk);
 	}
 
 	public function onBlockChanged(Vector3 $block) : void{
 	}
 
-	protected function mirrorChunk(Chunk $chunk) : void{
+	protected function mirrorChunk(int $chunkX, int $chunkZ, Chunk $chunk) : void{
 	}
 }

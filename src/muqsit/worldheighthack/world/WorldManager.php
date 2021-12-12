@@ -8,6 +8,7 @@ use muqsit\worldheighthack\generator\VoidGenerator;
 use muqsit\worldheighthack\Loader;
 use pocketmine\world\Position;
 use pocketmine\world\World;
+use pocketmine\world\WorldCreationOptions;
 
 final class WorldManager{
 
@@ -30,14 +31,15 @@ final class WorldManager{
 		foreach($loader->getServer()->getWorldManager()->getWorlds() as $world){
 			$this->onWorldLoad($world);
 			$instance = $this->get($world);
-			foreach($world->getChunks() as $chunk){
-				$instance->onChunkLoad($chunk->getX(), $chunk->getZ());
+			foreach($world->getLoadedChunks() as $chunkHash => $chunk){
+                World::getXZ($chunkHash, $chunkX, $chunkZ);
+				$instance->onChunkLoad($chunkX, $chunkZ);
 			}
 		}
 
 		for($i = 1; $i <= 4; ++$i){
 			if(!$loader->getServer()->getWorldManager()->loadWorld("world." . $i)){
-				$loader->getServer()->getWorldManager()->generateWorld("world." . $i, null, VoidGenerator::class);
+				$loader->getServer()->getWorldManager()->generateWorld("world." . $i, WorldCreationOptions::create());
 			}
 		}
 	}
